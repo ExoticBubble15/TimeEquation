@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Test {
+public class TimeEquation {
 
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);
