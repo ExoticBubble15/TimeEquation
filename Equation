@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class TimeEquation {
+public class Equation {
 
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);
@@ -8,7 +8,6 @@ public class TimeEquation {
 		String expression = input.nextLine();
 		expression = expression.replaceAll("\\s", "") + "+";
 		
-		ArrayList<Integer> hours = new ArrayList<Integer>();
 		ArrayList<Integer> minutes = new ArrayList<Integer>();
 		ArrayList<Double> seconds = new ArrayList<Double>();
 		ArrayList<String> operations = new ArrayList<String>();
@@ -21,7 +20,6 @@ public class TimeEquation {
 			if(currentChar.equals(":")) {
 				minutes.add(Integer.parseInt(expression.substring(beginning,i)));
 				beginning = i+1;
-				hours.add(0);
 			} else if(currentChar.contains("+") || currentChar.contains("-")){
 				seconds.add(Double.parseDouble(expression.substring(beginning,i)));
 				operations.add(currentChar);
@@ -29,48 +27,45 @@ public class TimeEquation {
 			}
 		}
 		operations.remove(operations.size()-1);
-
-		//adding the times
-		int totalHours = hours.get(0);
-		int totalMinutes = minutes.get(0);
-		double totalSeconds = seconds.get(0);
+		
+		//converting times into seconds
+		ArrayList<Double> inSeconds = new ArrayList<Double>();
+		for(int i = 0; i < minutes.size(); i++) {
+			inSeconds.add(minutes.get(i)*60+seconds.get(i));
+		}
+		
+		//doing the math
+		double totalSeconds = inSeconds.get(0);
 		for(int i = 0; i < operations.size(); i++) {
 			if(operations.get(i).equals("+")) {
-				totalMinutes += minutes.get(i+1);
-				totalSeconds += seconds.get(i+1);
+				totalSeconds += inSeconds.get(i+1);
 			} else {
-				totalMinutes -= minutes.get(i+1);
-				totalSeconds -= seconds.get(i+1);
+				totalSeconds -= inSeconds.get(i+1);
 			}
 		}
 		
-		//converting time into sub 60 
-		while(totalSeconds >= 60) {
-			totalMinutes++;
-			totalSeconds -= 60;
+		//formatting into hours, minutes, seconds
+		int endHours = 0;
+		int endMinutes = 0;
+		double endSeconds = Math.abs(totalSeconds);
+		while(endSeconds >= 60) {
+			endMinutes ++;
+			endSeconds -= 60;
 		}
-		while(totalMinutes >= 60) {
-			totalHours++;
-			totalMinutes -= 60;
+		while(endMinutes >= 60) {
+			endHours ++;
+			endMinutes -= 60;
 		}
-		
-		//adjusting if time is negative
-		while(totalSeconds <= -60) {
-			totalMinutes--;
-			totalSeconds += 60;
+		System.out.print("Total time: ");
+		if(totalSeconds < 0) {
+			System.out.print("-");
+			endHours *= -1;
+			endMinutes *= -1;
+			endSeconds *= -1;
 		}
-		while(totalMinutes <= -60) {
-			totalHours--;
-			totalMinutes += 60;
-		}
-		
-		System.out.println("Total Time:");
-		System.out.println(totalHours + " hours");
-		System.out.println(totalMinutes + " minutes");
-		System.out.println(totalSeconds + " seconds");
-		if(totalHours > 0) {
-			System.out.print(totalHours + ":");
-		}
-		System.out.print(totalMinutes + ":" + totalSeconds);
+		System.out.println(Math.abs(endHours) + ":" + Math.abs(endMinutes) + ":" + Math.abs(endSeconds));
+		System.out.println(endHours + " Hours");
+		System.out.println(endMinutes + " Minutes");
+		System.out.println(endSeconds + " Seconds");
 	}
 }
